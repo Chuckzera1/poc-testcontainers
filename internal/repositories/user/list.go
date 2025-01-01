@@ -9,6 +9,7 @@ func (u *userRepository) List(filter *models.User, page int) ([]models.User, err
 	result := []models.User{}
 	err := u.db.
 		Where(filter).
+		Order("name ASC").
 		Limit(10).
 		Offset(10 * page).
 		Find(&result).
