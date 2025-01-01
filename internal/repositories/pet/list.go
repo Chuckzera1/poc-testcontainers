@@ -1,12 +1,12 @@
-package user
+package pet
 
 import (
 	"log"
 	"poc-testcontainers/internal/models"
 )
 
-func (u *userRepository) List(filter *models.User, page int) ([]models.User, error) {
-	result := []models.User{}
+func (u *petRepository) List(filter *models.Pet, page int) ([]models.Pet, error) {
+	result := []models.Pet{}
 	err := u.db.
 		Where(filter).
 		Limit(10).
@@ -15,7 +15,7 @@ func (u *userRepository) List(filter *models.User, page int) ([]models.User, err
 		Error
 
 	if err != nil {
-		log.Printf("Error listing users. \nReason= %s", err.Error())
+		log.Printf("Error listing pets. \nReason= %s", err.Error())
 		return nil, err
 	}
 
