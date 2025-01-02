@@ -2,13 +2,18 @@ package user_test
 
 import (
 	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateRepository(t *testing.T) {
-	cleanUpUserDB(t)
+	tx := db.Begin()
+	repo := user.NewUserRepository(tx)
+
+	defer tx.Rollback()
+
 	t.Run("Should create user correctly", func(t *testing.T) {
 		u := models.User{
 			Name: "test-name",
@@ -17,7 +22,7 @@ func TestCreateRepository(t *testing.T) {
 		result, err := repo.Create(&u)
 
 		var userCreated models.User
-		db.Where("name", "test-name").First(&userCreated)
+		tx.Where("name", "test-name").First(&userCreated)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)

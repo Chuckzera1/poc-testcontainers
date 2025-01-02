@@ -2,13 +2,18 @@ package pet_test
 
 import (
 	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/repositories/pet"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListRepository(t *testing.T) {
-	cleanUpPetDB(t)
+	tx := db.Begin()
+	repo := pet.NewPetRepository(tx)
+
+	defer tx.Rollback()
+
 	t.Run("Should list pet filtered correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -22,7 +27,7 @@ func TestListRepository(t *testing.T) {
 				Age:  30,
 			},
 		}
-		db.Create(&users)
+		tx.Create(&users)
 
 		pets := []models.Pet{
 			{
@@ -46,7 +51,7 @@ func TestListRepository(t *testing.T) {
 				UserRespnsibleID: users[0].ID,
 			},
 		}
-		db.Create(&pets)
+		tx.Create(&pets)
 
 		filter := models.Pet{
 			UserRespnsibleID: users[0].ID,

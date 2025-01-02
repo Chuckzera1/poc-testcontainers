@@ -2,13 +2,18 @@ package user_test
 
 import (
 	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListRepository(t *testing.T) {
-	cleanUpUserDB(t)
+	tx := db.Begin()
+	repo := user.NewUserRepository(tx)
+
+	defer tx.Rollback()
+
 	t.Run("Should list users filtered correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -32,7 +37,7 @@ func TestListRepository(t *testing.T) {
 				Age:  40,
 			},
 		}
-		db.Create(&users)
+		tx.Create(&users)
 		filter := models.User{
 			Age: 30,
 		}
@@ -41,7 +46,7 @@ func TestListRepository(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Equal(t, 3, len(result))
+		assert.Equal(t, 2, len(result))
 		assert.Equal(t, result[0].Name, "test-name-2")
 		assert.Equal(t, result[1].Name, "test-name-3")
 	})

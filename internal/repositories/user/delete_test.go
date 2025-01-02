@@ -2,13 +2,18 @@ package user_test
 
 import (
 	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDeletetRepository(t *testing.T) {
-	cleanUpUserDB(t)
+	tx := db.Begin()
+	repo := user.NewUserRepository(tx)
+
+	defer tx.Rollback()
+
 	t.Run("Should delete user correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -32,12 +37,12 @@ func TestDeletetRepository(t *testing.T) {
 				Age:  40,
 			},
 		}
-		db.Create(&users)
+		tx.Create(&users)
 
 		err := repo.Delete(users[1].ID)
 
 		var result []models.User
-		db.Find(&result)
+		tx.Find(&result)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)

@@ -2,19 +2,24 @@ package pet_test
 
 import (
 	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/repositories/pet"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateRepository(t *testing.T) {
-	cleanUpPetDB(t)
+	tx := db.Begin()
+	repo := pet.NewPetRepository(tx)
+
+	defer tx.Rollback()
+
 	t.Run("Should create pet correctly", func(t *testing.T) {
 		user := models.User{
 			Name: "test-name",
 			Age:  20,
 		}
-		db.Create(&user)
+		tx.Create(&user)
 
 		p := models.Pet{
 			Name:             "test-pet-name",
@@ -24,7 +29,7 @@ func TestCreateRepository(t *testing.T) {
 		result, err := repo.Create(&p)
 
 		var petCreated models.Pet
-		db.Where("name", "test-pet-name").First(&petCreated)
+		tx.Where("name", "test-pet-name").First(&petCreated)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
