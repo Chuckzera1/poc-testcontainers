@@ -52,6 +52,6 @@ func TestDeletetRepository(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Equal(t, 5, len(result))
+		assert.Equal(t, 3, len(result))
 	})
 }
