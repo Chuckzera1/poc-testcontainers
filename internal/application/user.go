@@ -11,7 +11,7 @@ type ListUsersRepository interface {
 }
 
 type DeleteUserRepository interface {
-	Delete(ID uint64) error
+	Delete(id uint64) error
 }
 
 type UserRepository interface {
