@@ -1,24 +1,19 @@
 package pet_test
 
 import (
-	"context"
 	"poc-testcontainers/internal/models"
 	"poc-testcontainers/internal/repositories/pet"
-	"poc-testcontainers/internal/repositories/testutils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListRepository(t *testing.T) {
-	ctx := context.Background()
-	db, err := testutils.NewTestDatabase(ctx, &models.Pet{})
-	if err != nil {
-		t.Fatalf("Error getting test db \nReason= %s", err.Error())
-	}
+	tx := db.Begin()
+	repo := pet.NewPetRepository(tx)
 
-	gormDB := db.GormDB
-	repo := pet.NewPetRepository(gormDB)
+	defer tx.Rollback()
+
 	t.Run("Should list pet filtered correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -32,7 +27,7 @@ func TestListRepository(t *testing.T) {
 				Age:  30,
 			},
 		}
-		gormDB.Create(&users)
+		tx.Create(&users)
 
 		pets := []models.Pet{
 			{
@@ -56,7 +51,7 @@ func TestListRepository(t *testing.T) {
 				UserRespnsibleID: users[0].ID,
 			},
 		}
-		gormDB.Create(&pets)
+		tx.Create(&pets)
 
 		filter := models.Pet{
 			UserRespnsibleID: users[0].ID,

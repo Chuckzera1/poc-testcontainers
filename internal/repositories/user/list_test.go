@@ -1,9 +1,7 @@
 package user_test
 
 import (
-	"context"
 	"poc-testcontainers/internal/models"
-	"poc-testcontainers/internal/repositories/testutils"
 	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
@@ -11,14 +9,11 @@ import (
 )
 
 func TestListRepository(t *testing.T) {
-	ctx := context.Background()
-	db, err := testutils.NewTestDatabase(ctx, &models.User{})
-	if err != nil {
-		t.Fatalf("Error getting test db \nReason= %s", err.Error())
-	}
+	tx := db.Begin()
+	repo := user.NewUserRepository(tx)
 
-	gormDB := db.GormDB
-	repo := user.NewUserRepository(gormDB)
+	defer tx.Rollback()
+
 	t.Run("Should list users filtered correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -42,7 +37,7 @@ func TestListRepository(t *testing.T) {
 				Age:  40,
 			},
 		}
-		gormDB.Create(&users)
+		tx.Create(&users)
 		filter := models.User{
 			Age: 30,
 		}

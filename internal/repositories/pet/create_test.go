@@ -1,30 +1,25 @@
 package pet_test
 
 import (
-	"context"
 	"poc-testcontainers/internal/models"
 	"poc-testcontainers/internal/repositories/pet"
-	"poc-testcontainers/internal/repositories/testutils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateRepository(t *testing.T) {
-	ctx := context.Background()
-	db, err := testutils.NewTestDatabase(ctx, &models.Pet{})
-	if err != nil {
-		t.Fatalf("Error getting test db \nReason= %s", err.Error())
-	}
+	tx := db.Begin()
+	repo := pet.NewPetRepository(tx)
 
-	gormDB := db.GormDB
-	repo := pet.NewPetRepository(gormDB)
+	defer tx.Rollback()
+
 	t.Run("Should create pet correctly", func(t *testing.T) {
 		user := models.User{
 			Name: "test-name",
 			Age:  20,
 		}
-		gormDB.Create(&user)
+		tx.Create(&user)
 
 		p := models.Pet{
 			Name:             "test-pet-name",
@@ -34,7 +29,7 @@ func TestCreateRepository(t *testing.T) {
 		result, err := repo.Create(&p)
 
 		var petCreated models.Pet
-		gormDB.Where("name", "test-pet-name").First(&petCreated)
+		tx.Where("name", "test-pet-name").First(&petCreated)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
