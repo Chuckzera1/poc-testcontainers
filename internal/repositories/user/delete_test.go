@@ -1,9 +1,7 @@
 package user_test
 
 import (
-	"context"
 	"poc-testcontainers/internal/models"
-	"poc-testcontainers/internal/repositories/testutils"
 	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
@@ -11,15 +9,11 @@ import (
 )
 
 func TestDeletetRepository(t *testing.T) {
-	ctx := context.Background()
-	db, err := testutils.NewTestDatabase(ctx, &models.User{})
-	if err != nil {
-		t.Fatalf("Error getting test db \nReason= %s", err.Error())
-	}
+	tx := db.Begin()
+	repo := user.NewUserRepository(tx)
 
-	gormDB := db.GormDB
-	repo := user.NewUserRepository(gormDB)
-	gormDB.Raw("DELETE FROM users")
+	defer tx.Rollback()
+
 	t.Run("Should delete user correctly", func(t *testing.T) {
 		users := []models.User{
 			{
@@ -43,12 +37,12 @@ func TestDeletetRepository(t *testing.T) {
 				Age:  40,
 			},
 		}
-		gormDB.Create(&users)
+		tx.Create(&users)
 
 		err := repo.Delete(users[1].ID)
 
 		var result []models.User
-		gormDB.Find(&result)
+		tx.Find(&result)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
