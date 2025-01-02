@@ -5,12 +5,12 @@ import (
 	"poc-testcontainers/internal/models"
 )
 
-func (u *userRepository) Create(user *models.User) (*models.User, error) {
-	err := u.db.Create(user).Error
+func (u *userRepository) Delete(id uint64) error {
+	err := u.db.Delete(&models.User{ID: id}).Error
 	if err != nil {
 		log.Printf("Error creating user. \nReason= %s", err.Error())
-		return nil, err
+		return err
 	}
 
-	return user, nil
+	return nil
 }
