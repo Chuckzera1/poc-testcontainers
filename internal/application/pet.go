@@ -1,13 +1,13 @@
 package application
 
-import "poc-testcontainers/internal/models"
+import "poc-testcontainers/internal/model"
 
 type CreatePetRepository interface {
-	Create(pet *models.Pet) (*models.Pet, error)
+	Create(pet *model.Pet) (*model.Pet, error)
 }
 
 type ListPetsRepository interface {
-	List(filter *models.Pet, page int) ([]models.Pet, error)
+	List(filter *model.Pet, page int) ([]model.Pet, error)
 }
 
 type DeletePetRepository interface {

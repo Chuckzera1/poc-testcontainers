@@ -1,7 +1,7 @@
 package pet_test
 
 import (
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/pet"
 	"testing"
 
@@ -15,20 +15,20 @@ func TestCreateRepository(t *testing.T) {
 	defer tx.Rollback()
 
 	t.Run("Should create pet correctly", func(t *testing.T) {
-		user := models.User{
+		user := model.User{
 			Name: "test-name",
 			Age:  20,
 		}
 		tx.Create(&user)
 
-		p := models.Pet{
+		p := model.Pet{
 			Name:             "test-pet-name",
 			Age:              1,
 			UserRespnsibleID: user.ID,
 		}
 		result, err := repo.Create(&p)
 
-		var petCreated models.Pet
+		var petCreated model.Pet
 		tx.Where("name", "test-pet-name").First(&petCreated)
 
 		assert.NoError(t, err)

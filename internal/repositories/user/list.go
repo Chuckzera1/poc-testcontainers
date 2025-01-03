@@ -2,11 +2,11 @@ package user
 
 import (
 	"log"
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 )
 
-func (u *userRepository) List(filter *models.User, page int) ([]models.User, error) {
-	result := []models.User{}
+func (u *userRepository) List(filter *model.User, page int) ([]model.User, error) {
+	result := []model.User{}
 	err := u.db.
 		Where(filter).
 		Order("name ASC").
