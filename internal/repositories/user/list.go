@@ -6,8 +6,9 @@ import (
 )
 
 func (u *userRepository) List(filter *model.User, page int) ([]model.User, error) {
-	result := []model.User{}
+	var result []model.User
 	err := u.db.
+		Select("id, name, age").
 		Where(filter).
 		Order("name ASC").
 		Limit(10).

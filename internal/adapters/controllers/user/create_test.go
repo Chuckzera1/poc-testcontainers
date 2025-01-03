@@ -16,11 +16,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockRepository struct {
+type MockCreateRepository struct {
 	mock.Mock
 }
 
-func (m *MockRepository) Create(user *model.User) (*model.User, error) {
+func (m *MockCreateRepository) Create(user *model.User) (*model.User, error) {
 	args := m.Called(user)
 	if user, ok := args.Get(0).(*model.User); ok {
 		return user, args.Error(1)
@@ -29,7 +29,7 @@ func (m *MockRepository) Create(user *model.User) (*model.User, error) {
 	return nil, args.Error(1)
 }
 
-func TestHandle(t *testing.T) {
+func TestCreateHandle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
@@ -37,21 +37,21 @@ func TestHandle(t *testing.T) {
 		requestBody    interface{}
 		expectedStatus int
 		expectedBody   string
-		repositoryMock func(repo *MockRepository)
+		repositoryMock func(repo *MockCreateRepository)
 	}{
 		{
 			name:           "Missing request body",
 			requestBody:    nil,
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"Request body is required"}`,
-			repositoryMock: func(repo *MockRepository) {},
+			repositoryMock: func(repo *MockCreateRepository) {},
 		},
 		{
 			name:           "Invalid JSON body",
 			requestBody:    "{invalid}",
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"invalid character 'i' looking for beginning of object key string"}`,
-			repositoryMock: func(repo *MockRepository) {},
+			repositoryMock: func(repo *MockCreateRepository) {},
 		},
 		{
 			name: "Valid request body",
@@ -61,7 +61,7 @@ func TestHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"id":1,"name":"John Doe","age":30}`,
-			repositoryMock: func(repo *MockRepository) {
+			repositoryMock: func(repo *MockCreateRepository) {
 				repo.On("Create", &model.User{Name: "John Doe", Age: 30}).
 					Return(&model.User{ID: 1, Name: "John Doe", Age: 30}, nil).
 					Once()
@@ -75,7 +75,7 @@ func TestHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody:   `{"message":"Failed to create user"}`,
-			repositoryMock: func(repo *MockRepository) {
+			repositoryMock: func(repo *MockCreateRepository) {
 				repo.On("Create", &model.User{Name: "John Doe", Age: 30}).
 					Return(nil, errors.New("database error")).
 					Once()
@@ -85,8 +85,8 @@ func TestHandle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			repo := new(MockRepository)
-			ctrl := user.NewUserController(repo)
+			repo := new(MockCreateRepository)
+			ctrl := user.NewCreateUserController(repo)
 
 			tt.repositoryMock(repo)
 
