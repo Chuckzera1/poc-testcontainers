@@ -1,7 +1,7 @@
 package user_test
 
 import (
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
@@ -15,13 +15,13 @@ func TestCreateRepository(t *testing.T) {
 	defer tx.Rollback()
 
 	t.Run("Should create user correctly", func(t *testing.T) {
-		u := models.User{
+		u := model.User{
 			Name: "test-name",
 			Age:  20,
 		}
 		result, err := repo.Create(&u)
 
-		var userCreated models.User
+		var userCreated model.User
 		tx.Where("name", "test-name").First(&userCreated)
 
 		assert.NoError(t, err)

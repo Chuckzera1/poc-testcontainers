@@ -1,13 +1,13 @@
 package application
 
-import "poc-testcontainers/internal/models"
+import "poc-testcontainers/internal/model"
 
 type CreateUserRepository interface {
-	Create(user *models.User) (*models.User, error)
+	Create(user *model.User) (*model.User, error)
 }
 
 type ListUsersRepository interface {
-	List(filter *models.User, page int) ([]models.User, error)
+	List(filter *model.User, page int) ([]model.User, error)
 }
 
 type DeleteUserRepository interface {
