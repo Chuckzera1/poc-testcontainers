@@ -20,7 +20,7 @@ type TestDatabase struct {
 	GormDB    *gorm.DB
 }
 
-func NewTestDatabase(ctx context.Context, models ...interface{}) (*TestDatabase, error) {
+func NewTestDatabase(ctx context.Context, model ...interface{}) (*TestDatabase, error) {
 	container, err := startPostgresContainer(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start PostgreSQL container: %w", err)
@@ -38,8 +38,8 @@ func NewTestDatabase(ctx context.Context, models ...interface{}) (*TestDatabase,
 		return nil, fmt.Errorf("failed to connect with GORM: %w", err)
 	}
 
-	if len(models) > 0 {
-		if err := autoMigrateModels(gormDB, models); err != nil {
+	if len(model) > 0 {
+		if err := autoMigratemodel(gormDB, model); err != nil {
 			container.Terminate(ctx)
 			return nil, fmt.Errorf("failed to run AutoMigrate: %w", err)
 		}
@@ -74,8 +74,8 @@ func startPostgresContainer(ctx context.Context) (testcontainers.Container, erro
 	})
 }
 
-func autoMigrateModels(db *gorm.DB, models []interface{}) error {
-	return db.AutoMigrate(models...)
+func autoMigratemodel(db *gorm.DB, model []interface{}) error {
+	return db.AutoMigrate(model...)
 }
 
 func (db *TestDatabase) Cleanup(ctx context.Context) error {

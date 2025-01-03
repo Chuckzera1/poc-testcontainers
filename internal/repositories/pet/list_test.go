@@ -1,7 +1,7 @@
 package pet_test
 
 import (
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/pet"
 	"testing"
 
@@ -15,7 +15,7 @@ func TestListRepository(t *testing.T) {
 	defer tx.Rollback()
 
 	t.Run("Should list pet filtered correctly", func(t *testing.T) {
-		users := []models.User{
+		users := []model.User{
 			{
 
 				Name: "test-name",
@@ -29,7 +29,7 @@ func TestListRepository(t *testing.T) {
 		}
 		tx.Create(&users)
 
-		pets := []models.Pet{
+		pets := []model.Pet{
 			{
 				Name:             "test-pet-name",
 				Age:              1,
@@ -53,7 +53,7 @@ func TestListRepository(t *testing.T) {
 		}
 		tx.Create(&pets)
 
-		filter := models.Pet{
+		filter := model.Pet{
 			UserRespnsibleID: users[0].ID,
 		}
 		result, err := repo.List(&filter, 0)

@@ -5,7 +5,7 @@ import (
 	"log"
 	"poc-testcontainers/internal/config"
 	"poc-testcontainers/internal/database"
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func main() {
 		env.DATABASE_PORT,
 		env.DATABASE_NAME,
 	)
-	db.AutoMigrate(&models.User{}, &models.Pet{})
+	db.AutoMigrate(&model.User{}, &model.Pet{})
 
 	port := fmt.Sprintf(":%v", env.PORT)
 	r.Run(port)

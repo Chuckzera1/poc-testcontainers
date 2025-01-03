@@ -2,10 +2,10 @@ package user
 
 import (
 	"log"
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 )
 
-func (u *userRepository) Create(user *models.User) (*models.User, error) {
+func (u *userRepository) Create(user *model.User) (*model.User, error) {
 	err := u.db.Create(user).Error
 	if err != nil {
 		log.Printf("Error creating user. \nReason= %s", err.Error())

@@ -1,7 +1,7 @@
 package user_test
 
 import (
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
@@ -15,7 +15,7 @@ func TestListRepository(t *testing.T) {
 	defer tx.Rollback()
 
 	t.Run("Should list users filtered correctly", func(t *testing.T) {
-		users := []models.User{
+		users := []model.User{
 			{
 
 				Name: "test-name",
@@ -38,7 +38,7 @@ func TestListRepository(t *testing.T) {
 			},
 		}
 		tx.Create(&users)
-		filter := models.User{
+		filter := model.User{
 			Age: 30,
 		}
 

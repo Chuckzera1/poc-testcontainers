@@ -1,7 +1,7 @@
 package user_test
 
 import (
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/user"
 	"testing"
 
@@ -15,7 +15,7 @@ func TestDeletetRepository(t *testing.T) {
 	defer tx.Rollback()
 
 	t.Run("Should delete user correctly", func(t *testing.T) {
-		users := []models.User{
+		users := []model.User{
 			{
 
 				Name: "test-name",
@@ -41,7 +41,7 @@ func TestDeletetRepository(t *testing.T) {
 
 		err := repo.Delete(users[1].ID)
 
-		var result []models.User
+		var result []model.User
 		tx.Find(&result)
 
 		assert.NoError(t, err)

@@ -2,11 +2,11 @@ package pet
 
 import (
 	"log"
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 )
 
-func (u *petRepository) List(filter *models.Pet, page int) ([]models.Pet, error) {
-	result := []models.Pet{}
+func (u *petRepository) List(filter *model.Pet, page int) ([]model.Pet, error) {
+	result := []model.Pet{}
 	err := u.db.
 		Where(filter).
 		Order("name ASC").

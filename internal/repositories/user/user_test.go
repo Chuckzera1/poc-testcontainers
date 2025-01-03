@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"poc-testcontainers/internal/models"
+	"poc-testcontainers/internal/model"
 	"poc-testcontainers/internal/repositories/testutils"
 	"testing"
 
@@ -15,7 +15,7 @@ var db *gorm.DB
 
 func TestMain(m *testing.M) {
 	ctx := context.Background()
-	testDB, err := testutils.NewTestDatabase(ctx, &models.User{})
+	testDB, err := testutils.NewTestDatabase(ctx, &model.User{})
 	if err != nil {
 		fmt.Printf("Error getting test db \nReason= %s", err.Error())
 		os.Exit(1)
