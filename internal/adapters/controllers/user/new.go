@@ -23,3 +23,13 @@ func NewListUserController(repository application.ListUsersRepository) applicati
 		repository,
 	}
 }
+
+type deleteUserController struct {
+	repository application.DeleteUserRepository
+}
+
+func NewDeleteUserController(repository application.DeleteUserRepository) application.BaseController {
+	return &deleteUserController{
+		repository,
+	}
+}
