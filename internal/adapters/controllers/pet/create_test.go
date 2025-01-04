@@ -1,4 +1,4 @@
-package user_test
+package pet_test
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"poc-testcontainers/internal/adapters/controllers/user"
+	"poc-testcontainers/internal/adapters/controllers/pet"
 	"poc-testcontainers/internal/application/dto"
 	"poc-testcontainers/internal/model"
 	"testing"
@@ -20,10 +20,10 @@ type MockCreateRepository struct {
 	mock.Mock
 }
 
-func (m *MockCreateRepository) Create(user *model.User) (*model.User, error) {
-	args := m.Called(user)
-	if user, ok := args.Get(0).(*model.User); ok {
-		return user, args.Error(1)
+func (m *MockCreateRepository) Create(pet *model.Pet) (*model.Pet, error) {
+	args := m.Called(pet)
+	if pet, ok := args.Get(0).(*model.Pet); ok {
+		return pet, args.Error(1)
 	}
 
 	return nil, args.Error(1)
@@ -56,29 +56,41 @@ func TestCreateHandle(t *testing.T) {
 			repositoryMock: func(repo *MockCreateRepository) {},
 		},
 		{
-			name: "Valid request body",
-			requestBody: dto.CreateUserReqBody{
+			name: "Missing UserResponsibleID body",
+			requestBody: dto.CreatePetReqBody{
 				Name: "John Doe",
 				Age:  30,
 			},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"message":"Key: 'CreatePetReqBody.UserResponsibleID' Error:Field validation for 'UserResponsibleID' failed on the 'required' tag"}`,
+			repositoryMock: func(repo *MockCreateRepository) {},
+		},
+		{
+			name: "Valid request body",
+			requestBody: dto.CreatePetReqBody{
+				Name:              "John Doe",
+				Age:               30,
+				UserResponsibleID: 1,
+			},
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"id":1,"name":"John Doe","age":30}`,
+			expectedBody:   `{"id":1,"name":"John Doe","age":30, "userResponsibleId": 1}`,
 			repositoryMock: func(repo *MockCreateRepository) {
-				repo.On("Create", &model.User{Name: "John Doe", Age: 30}).
-					Return(&model.User{ID: 1, Name: "John Doe", Age: 30}, nil).
+				repo.On("Create", &model.Pet{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
+					Return(&model.Pet{ID: 1, Name: "John Doe", Age: 30, UserResponsibleID: 1}, nil).
 					Once()
 			},
 		},
 		{
 			name: "Repository returns error",
-			requestBody: dto.CreateUserReqBody{
-				Name: "John Doe",
-				Age:  30,
+			requestBody: dto.CreatePetReqBody{
+				Name:              "John Doe",
+				Age:               30,
+				UserResponsibleID: 1,
 			},
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   `{"message":"Failed to create user"}`,
+			expectedBody:   `{"message":"Failed to create pet"}`,
 			repositoryMock: func(repo *MockCreateRepository) {
-				repo.On("Create", &model.User{Name: "John Doe", Age: 30}).
+				repo.On("Create", &model.Pet{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
 					Return(nil, errors.New("database error")).
 					Once()
 			},
@@ -88,12 +100,12 @@ func TestCreateHandle(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			repo := new(MockCreateRepository)
-			ctrl := user.NewCreateUserController(repo)
+			ctrl := pet.NewCreatePetController(repo)
 
 			tt.repositoryMock(repo)
 
 			r := gin.Default()
-			r.POST("/user", ctrl.Handle)
+			r.POST("/pet", ctrl.Handle)
 
 			var requestBody []byte
 			if tt.requestBody != nil {
@@ -104,7 +116,7 @@ func TestCreateHandle(t *testing.T) {
 				}
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(requestBody))
+			req := httptest.NewRequest(http.MethodPost, "/pet", bytes.NewBuffer(requestBody))
 			req.Header.Set("Content-Type", "application/json")
 			resp := httptest.NewRecorder()
 

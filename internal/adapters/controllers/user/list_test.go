@@ -23,6 +23,9 @@ func (m *MockListRepository) List(user *model.User, page int) ([]model.User, err
 
 func TestHandleWithQueryName(t *testing.T) {
 	t.Parallel()
+
+	gin.SetMode(gin.TestMode)
+
 	tests := []struct {
 		name           string
 		queryName      string

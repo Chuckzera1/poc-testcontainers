@@ -22,9 +22,9 @@ func TestCreateRepository(t *testing.T) {
 		tx.Create(&user)
 
 		p := model.Pet{
-			Name:             "test-pet-name",
-			Age:              1,
-			UserRespnsibleID: user.ID,
+			Name:              "test-pet-name",
+			Age:               1,
+			UserResponsibleID: user.ID,
 		}
 		result, err := repo.Create(&p)
 
