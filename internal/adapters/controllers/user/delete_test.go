@@ -24,6 +24,8 @@ func (m *MockRepository) Delete(userID uint64) error {
 }
 
 func TestDeleteUserController_Handle(t *testing.T) {
+	t.Parallel()
+
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
