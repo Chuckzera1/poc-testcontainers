@@ -9,6 +9,7 @@ func (u *petRepository) List(filter *model.Pet, page int) ([]model.Pet, error) {
 	result := []model.Pet{}
 	err := u.db.
 		Where(filter).
+		Preload("UserResponsible").
 		Order("name ASC").
 		Limit(10).
 		Offset(10 * page).

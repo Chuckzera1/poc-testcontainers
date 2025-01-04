@@ -1,9 +1,9 @@
-package user_test
+package pet_test
 
 import (
 	"net/http"
 	"net/http/httptest"
-	"poc-testcontainers/internal/adapters/controllers/user"
+	"poc-testcontainers/internal/adapters/controllers/pet"
 	"poc-testcontainers/internal/model"
 	"testing"
 
@@ -16,9 +16,9 @@ type MockListRepository struct {
 	mock.Mock
 }
 
-func (m *MockListRepository) List(user *model.User, page int) ([]model.User, error) {
-	args := m.Called(user, page)
-	return args.Get(0).([]model.User), args.Error(1)
+func (m *MockListRepository) List(pet *model.Pet, page int) ([]model.Pet, error) {
+	args := m.Called(pet, page)
+	return args.Get(0).([]model.Pet), args.Error(1)
 }
 
 func TestHandleWithQueryName(t *testing.T) {
@@ -30,19 +30,23 @@ func TestHandleWithQueryName(t *testing.T) {
 		name           string
 		queryName      string
 		queryPage      string
-		mockResult     []model.User
+		mockResult     []model.Pet
 		mockError      error
 		expectedStatus int
 		expectedBody   string
 	}{
 		{
-			name:           "valid request",
-			queryName:      "John",
-			queryPage:      "1",
-			mockResult:     []model.User{{ID: 1, Name: "John", Age: 30}},
+			name:      "valid request",
+			queryName: "John",
+			queryPage: "1",
+			mockResult: []model.Pet{{ID: 1, Name: "John", Age: 30, UserResponsibleID: 1, UserResponsible: &model.User{
+				ID:   1,
+				Name: "James",
+				Age:  30,
+			}}},
 			mockError:      nil,
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"data":[{ "id":1, "name":"John", "age":30}]}`,
+			expectedBody:   `{"data":[{ "id":1, "name":"John", "age":30, "userResponsible": {"id": 1, "name": "James", "age": 30}}]}`,
 		},
 		{
 			name:           "invalid page query",
@@ -58,25 +62,25 @@ func TestHandleWithQueryName(t *testing.T) {
 			mockResult:     nil,
 			mockError:      assert.AnError,
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   `{"message":"Failed to list users"}`,
+			expectedBody:   `{"message":"Failed to list pets"}`,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := new(MockListRepository)
-			controller := user.NewListUserController(mockRepo)
+			controller := pet.NewListPetController(mockRepo)
 
 			if tt.mockResult != nil || tt.mockError != nil {
-				mockRepo.On("List", &model.User{Name: tt.queryName}, mock.AnythingOfType("int")).
+				mockRepo.On("List", &model.Pet{Name: tt.queryName}, mock.AnythingOfType("int")).
 					Return(tt.mockResult, tt.mockError)
 			}
 
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.GET("/users", controller.Handle)
+			r.GET("/pets", controller.Handle)
 
-			req := httptest.NewRequest(http.MethodGet, "/users?name="+tt.queryName+"&page="+tt.queryPage, nil)
+			req := httptest.NewRequest(http.MethodGet, "/pets?name="+tt.queryName+"&page="+tt.queryPage, nil)
 			w := httptest.NewRecorder()
 
 			r.ServeHTTP(w, req)

@@ -31,38 +31,44 @@ func TestListRepository(t *testing.T) {
 
 		pets := []model.Pet{
 			{
-				Name:             "test-pet-name",
-				Age:              1,
-				UserRespnsibleID: users[0].ID,
+				Name:              "test-pet-name",
+				Age:               1,
+				UserResponsibleID: users[0].ID,
 			},
 			{
-				Name:             "test-pet-name-2",
-				Age:              4,
-				UserRespnsibleID: users[0].ID,
+				Name:              "test-pet-name-2",
+				Age:               4,
+				UserResponsibleID: users[0].ID,
 			},
 			{
-				Name:             "test-pet-name-3",
-				Age:              10,
-				UserRespnsibleID: users[1].ID,
+				Name:              "test-pet-name-3",
+				Age:               10,
+				UserResponsibleID: users[1].ID,
 			},
 			{
-				Name:             "test-pet-name-4",
-				Age:              3,
-				UserRespnsibleID: users[0].ID,
+				Name:              "test-pet-name-4",
+				Age:               3,
+				UserResponsibleID: users[0].ID,
 			},
 		}
 		tx.Create(&pets)
 
 		filter := model.Pet{
-			UserRespnsibleID: users[0].ID,
+			UserResponsibleID: users[0].ID,
 		}
 		result, err := repo.List(&filter, 0)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, 3, len(result))
+
 		assert.Equal(t, "test-pet-name", result[0].Name)
+		assert.Equal(t, "test-name", result[0].UserResponsible.Name)
+
 		assert.Equal(t, "test-pet-name-2", result[1].Name)
+		assert.Equal(t, "test-name", result[1].UserResponsible.Name)
+
 		assert.Equal(t, "test-pet-name-4", result[2].Name)
+		assert.Equal(t, "test-name", result[2].UserResponsible.Name)
 	})
 }
