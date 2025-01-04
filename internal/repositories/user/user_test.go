@@ -15,7 +15,7 @@ var db *gorm.DB
 
 func TestMain(m *testing.M) {
 	ctx := context.Background()
-	testDB, err := testutils.NewTestDatabase(ctx, &model.User{})
+	testDB, err := testutils.NewTestDatabase(ctx, &model.User{}, &model.Pet{})
 	if err != nil {
 		fmt.Printf("Error getting test db \nReason= %s", err.Error())
 		os.Exit(1)

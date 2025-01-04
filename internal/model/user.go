@@ -14,3 +14,10 @@ type User struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
 }
+
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	if err := tx.Model(&Pet{}).Where("user_responsible_id = ?", u.ID).Delete(&Pet{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
