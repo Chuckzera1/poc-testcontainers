@@ -9,6 +9,7 @@ func Router(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
 	setupUserRouter(db, r)
+	setupPetRouter(db, r)
 
 	return r
 }

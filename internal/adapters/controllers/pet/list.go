@@ -32,7 +32,7 @@ func (l *listPetController) Handle(c *gin.Context) {
 		return
 	}
 
-	var dtos []dto.PetListDTO
+	var dtos []dto.PetListDTO = []dto.PetListDTO{}
 	for _, pet := range result {
 		dtos = append(dtos, dto.PetListDTO{
 			ID:   pet.ID,
