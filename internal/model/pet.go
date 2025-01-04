@@ -14,5 +14,5 @@ type Pet struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         gorm.DeletedAt
-	UserRespnsible    *User `gorm:"foreignKey:UserResponsibleID"`
+	UserResponsible   *User `gorm:"foreignKey:UserResponsibleID"`
 }

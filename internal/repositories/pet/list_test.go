@@ -61,8 +61,14 @@ func TestListRepository(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, 3, len(result))
+
 		assert.Equal(t, "test-pet-name", result[0].Name)
+		assert.Equal(t, "test-name", result[0].UserResponsible.Name)
+
 		assert.Equal(t, "test-pet-name-2", result[1].Name)
+		assert.Equal(t, "test-name", result[1].UserResponsible.Name)
+
 		assert.Equal(t, "test-pet-name-4", result[2].Name)
+		assert.Equal(t, "test-name", result[2].UserResponsible.Name)
 	})
 }

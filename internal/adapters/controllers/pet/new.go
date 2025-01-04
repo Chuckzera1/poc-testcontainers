@@ -11,3 +11,13 @@ func NewCreatePetController(repository application.CreatePetRepository) applicat
 		repository,
 	}
 }
+
+type listPetController struct {
+	repository application.ListPetsRepository
+}
+
+func NewListPetController(repository application.ListPetsRepository) application.BaseController {
+	return &listPetController{
+		repository,
+	}
+}
