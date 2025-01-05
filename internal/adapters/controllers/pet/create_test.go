@@ -57,17 +57,17 @@ func TestCreateHandle(t *testing.T) {
 		},
 		{
 			name: "Missing UserResponsibleID body",
-			requestBody: dto.CreatePetReqBody{
+			requestBody: dto.CreatePetReqDTO{
 				Name: "John Doe",
 				Age:  30,
 			},
 			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"message":"Key: 'CreatePetReqBody.UserResponsibleID' Error:Field validation for 'UserResponsibleID' failed on the 'required' tag"}`,
+			expectedBody:   `{"message":"Key: 'CreatePetReqDTO.UserResponsibleID' Error:Field validation for 'UserResponsibleID' failed on the 'required' tag"}`,
 			repositoryMock: func(repo *MockCreateRepository) {},
 		},
 		{
 			name: "Valid request body",
-			requestBody: dto.CreatePetReqBody{
+			requestBody: dto.CreatePetReqDTO{
 				Name:              "John Doe",
 				Age:               30,
 				UserResponsibleID: 1,
@@ -82,7 +82,7 @@ func TestCreateHandle(t *testing.T) {
 		},
 		{
 			name: "Repository returns error",
-			requestBody: dto.CreatePetReqBody{
+			requestBody: dto.CreatePetReqDTO{
 				Name:              "John Doe",
 				Age:               30,
 				UserResponsibleID: 1,
@@ -99,6 +99,8 @@ func TestCreateHandle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			repo := new(MockCreateRepository)
 			ctrl := pet.NewCreatePetController(repo)
 

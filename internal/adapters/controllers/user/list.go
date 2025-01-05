@@ -32,9 +32,9 @@ func (l *listUserController) Handle(c *gin.Context) {
 		return
 	}
 
-	var dtos []dto.UserListDTO = []dto.UserListDTO{}
+	var dtos []dto.UserListResDTO = []dto.UserListResDTO{}
 	for _, user := range result {
-		dtos = append(dtos, dto.UserListDTO{
+		dtos = append(dtos, dto.UserListResDTO{
 			ID:   user.ID,
 			Name: user.Name,
 			Age:  user.Age,

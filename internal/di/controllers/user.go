@@ -4,14 +4,15 @@ import (
 	"poc-testcontainers/internal/adapters/controllers/user"
 	"poc-testcontainers/internal/application"
 	"poc-testcontainers/internal/di/repositories"
+	"poc-testcontainers/internal/di/usecase"
 
 	"gorm.io/gorm"
 )
 
 func DICreateUserController(db *gorm.DB) application.BaseController {
 	repo := repositories.DIUserRepository(db)
-
-	return user.NewCreateUserController(repo)
+	usecase := usecase.DICreateUserUseCase(repo)
+	return user.NewCreateUserController(usecase)
 }
 
 func DIListUserController(db *gorm.DB) application.BaseController {

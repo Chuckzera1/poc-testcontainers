@@ -5,20 +5,20 @@ import (
 )
 
 type createUserController struct {
-	repository application.CreateUserRepository
+	useCase application.CreateUserUseCase
 }
 
-func NewCreateUserController(repository application.CreateUserRepository) application.BaseController {
+func NewCreateUserController(useCase application.CreateUserUseCase) application.BaseController {
 	return &createUserController{
-		repository,
+		useCase,
 	}
 }
 
 type listUserController struct {
-	repository application.ListUsersRepository
+	repository application.ListUserRepository
 }
 
-func NewListUserController(repository application.ListUsersRepository) application.BaseController {
+func NewListUserController(repository application.ListUserRepository) application.BaseController {
 	return &listUserController{
 		repository,
 	}
