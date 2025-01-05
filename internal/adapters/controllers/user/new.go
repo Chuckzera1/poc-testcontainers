@@ -15,12 +15,12 @@ func NewCreateUserController(useCase application.CreateUserUseCase) application.
 }
 
 type listUserController struct {
-	repository application.ListUserRepository
+	usecase application.ListUserUseCase
 }
 
-func NewListUserController(repository application.ListUserRepository) application.BaseController {
+func NewListUserController(usecase application.ListUserUseCase) application.BaseController {
 	return &listUserController{
-		repository,
+		usecase,
 	}
 }
 

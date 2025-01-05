@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"poc-testcontainers/internal/adapters/controllers/user"
-	"poc-testcontainers/internal/model"
+	"poc-testcontainers/internal/application/dto"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +16,9 @@ type MockListRepository struct {
 	mock.Mock
 }
 
-func (m *MockListRepository) List(user *model.User, page int) ([]model.User, error) {
-	args := m.Called(user, page)
-	return args.Get(0).([]model.User), args.Error(1)
+func (m *MockListRepository) List(name string, page int) ([]dto.UserListResDTO, error) {
+	args := m.Called(name, page)
+	return args.Get(0).([]dto.UserListResDTO), args.Error(1)
 }
 
 func TestHandleWithQueryName(t *testing.T) {
@@ -30,7 +30,7 @@ func TestHandleWithQueryName(t *testing.T) {
 		name           string
 		queryName      string
 		queryPage      string
-		mockResult     []model.User
+		mockResult     []dto.UserListResDTO
 		mockError      error
 		expectedStatus int
 		expectedBody   string
@@ -39,7 +39,7 @@ func TestHandleWithQueryName(t *testing.T) {
 			name:           "valid request",
 			queryName:      "John",
 			queryPage:      "1",
-			mockResult:     []model.User{{ID: 1, Name: "John", Age: 30}},
+			mockResult:     []dto.UserListResDTO{{ID: 1, Name: "John", Age: 30}},
 			mockError:      nil,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"data":[{ "id":1, "name":"John", "age":30}]}`,
@@ -52,7 +52,7 @@ func TestHandleWithQueryName(t *testing.T) {
 			expectedBody:   `{"message":"page query params is wrong"}`,
 		},
 		{
-			name:           "repository error",
+			name:           "usecase error",
 			queryName:      "John",
 			queryPage:      "1",
 			mockResult:     nil,
@@ -70,7 +70,7 @@ func TestHandleWithQueryName(t *testing.T) {
 			controller := user.NewListUserController(mockRepo)
 
 			if tt.mockResult != nil || tt.mockError != nil {
-				mockRepo.On("List", &model.User{Name: tt.queryName}, mock.AnythingOfType("int")).
+				mockRepo.On("List", tt.queryName, mock.AnythingOfType("int")).
 					Return(tt.mockResult, tt.mockError)
 			}
 

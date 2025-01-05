@@ -2,7 +2,6 @@ package user
 
 import (
 	"poc-testcontainers/internal/application"
-	"poc-testcontainers/internal/application/dto"
 )
 
 type createUserUseCase struct {
@@ -15,10 +14,6 @@ func NewCreateUserUseCase(repository application.CreateUserRepository) applicati
 
 type listUserUseCase struct {
 	repository application.ListUserRepository
-}
-
-func (l *listUserUseCase) List(name string, page int) ([]dto.UserListResDTO, error) {
-	panic("unimplemented")
 }
 
 func NewListUserUseCase(repository application.ListUserRepository) application.ListUserUseCase {

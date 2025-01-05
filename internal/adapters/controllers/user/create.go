@@ -27,9 +27,5 @@ func (ctrl *createUserController) Handle(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":   createdUser.ID,
-		"name": createdUser.Name,
-		"age":  createdUser.Age,
-	})
+	c.JSON(http.StatusOK, createdUser)
 }

@@ -17,8 +17,8 @@ func DICreateUserController(db *gorm.DB) application.BaseController {
 
 func DIListUserController(db *gorm.DB) application.BaseController {
 	repo := repositories.DIUserRepository(db)
-
-	return user.NewListUserController(repo)
+	usecase := usecase.DIListUserUseCase(repo)
+	return user.NewListUserController(usecase)
 }
 
 func DIDeleteUserController(db *gorm.DB) application.BaseController {
