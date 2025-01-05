@@ -8,3 +8,7 @@ import (
 func DICreateUserUseCase(repository application.CreateUserRepository) application.CreateUserUseCase {
 	return user.NewCreateUserUseCase(repository)
 }
+
+func DIListUserUseCase(repository application.ListUserRepository) application.ListUserUseCase {
+	return user.NewListUserUseCase(repository)
+}
