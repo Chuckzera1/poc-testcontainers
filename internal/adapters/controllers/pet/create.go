@@ -11,7 +11,7 @@ import (
 )
 
 func (ctrl *createPetController) Handle(c *gin.Context) {
-	var reqBody dto.CreatePetReqBody
+	var reqBody dto.CreatePetReqDTO
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		httpErroMessage := err.Error()
 		if errors.Is(err, io.EOF) {
@@ -34,7 +34,7 @@ func (ctrl *createPetController) Handle(c *gin.Context) {
 		return
 	}
 
-	result := &dto.CreatePetResBody{
+	result := &dto.CreatePetResDTO{
 		ID:                createdPet.ID,
 		Name:              createdPet.Name,
 		Age:               createdPet.Age,

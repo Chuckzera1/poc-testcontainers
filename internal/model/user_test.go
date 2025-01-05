@@ -23,33 +23,39 @@ func TestUserBeforeDelete_DeletesPets(t *testing.T) {
 
 	db.AutoMigrate(&model.User{}, &model.Pet{})
 
-	user := model.User{
-		Name: "John",
-		Age:  30,
-	}
-	db.Create(&user)
+	t.Run("Should delete pet and users", func(t *testing.T) {
+		user := model.User{
+			Name: "John",
+			Age:  30,
+		}
+		db.Create(&user)
 
-	pets := []model.Pet{
-		{
-			Name:              "Rex",
-			Age:               10,
-			UserResponsibleID: user.ID,
-		},
-		{
-			Name:              "Bidu",
-			Age:               9,
-			UserResponsibleID: user.ID,
-		},
-	}
+		pets := []model.Pet{
+			{
+				Name:              "Rex",
+				Age:               10,
+				UserResponsibleID: user.ID,
+			},
+			{
+				Name:              "Bidu",
+				Age:               9,
+				UserResponsibleID: user.ID,
+			},
+		}
 
-	db.Create(&pets)
+		db.Create(&pets)
 
-	db.Delete(&user)
+		db.Delete(&user)
 
-	var petsFound []model.Pet
-	db.Unscoped().Find(&petsFound)
+		var petsFound []model.Pet
+		db.Unscoped().Find(&petsFound)
 
-	for _, pet := range petsFound {
-		assert.NotZero(t, pet.DeletedAt)
+		for _, pet := range petsFound {
+			assert.NotZero(t, pet.DeletedAt)
+		}
+	})
+
+	if err := testDB.Cleanup(ctx); err != nil {
+		fmt.Printf("failed to clean up test database: %v\n", err)
 	}
 }

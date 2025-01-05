@@ -67,6 +67,8 @@ func TestDeleteUserController_Handle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			mockRepo := new(MockRepository)
 			if tt.userID != "" && tt.userID != "abc" {
 				userIDInt, _ := strconv.Atoi(tt.userID)
