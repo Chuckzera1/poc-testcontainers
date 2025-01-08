@@ -12,3 +12,7 @@ func DICreateUserUseCase(repository application.CreateUserRepository) applicatio
 func DIListUserUseCase(repository application.ListUserRepository) application.ListUserUseCase {
 	return user.NewListUserUseCase(repository)
 }
+
+func DIDeleteUserUseCase(repository application.DeleteUserRepository) application.DeleteUserUseCase {
+	return user.NewDeleteUserUseCase(repository)
+}

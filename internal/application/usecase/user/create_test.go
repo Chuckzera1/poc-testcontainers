@@ -18,7 +18,7 @@ func (m *mockCreateUserRepository) Create(user *model.User) (*model.User, error)
 	return m.CreateFn(user)
 }
 
-func TestCreateUserUseCase_Create(t *testing.T) {
+func TestCreateUserUseCase(t *testing.T) {
 	tests := []struct {
 		name          string
 		input         *dto.CreateUserReqDTO

@@ -15,21 +15,21 @@ func NewCreateUserController(useCase application.CreateUserUseCase) application.
 }
 
 type listUserController struct {
-	usecase application.ListUserUseCase
+	useCase application.ListUserUseCase
 }
 
-func NewListUserController(usecase application.ListUserUseCase) application.BaseController {
+func NewListUserController(useCase application.ListUserUseCase) application.BaseController {
 	return &listUserController{
-		usecase,
+		useCase,
 	}
 }
 
 type deleteUserController struct {
-	repository application.DeleteUserRepository
+	useCase application.DeleteUserUseCase
 }
 
-func NewDeleteUserController(repository application.DeleteUserRepository) application.BaseController {
+func NewDeleteUserController(useCase application.DeleteUserUseCase) application.BaseController {
 	return &deleteUserController{
-		repository,
+		useCase,
 	}
 }

@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockListRepository struct {
+type MockListUserUseCase struct {
 	mock.Mock
 }
 
-func (m *MockListRepository) List(name string, page int) ([]dto.UserListResDTO, error) {
+func (m *MockListUserUseCase) List(name string, page int) ([]dto.UserListResDTO, error) {
 	args := m.Called(name, page)
 	return args.Get(0).([]dto.UserListResDTO), args.Error(1)
 }
@@ -66,7 +66,7 @@ func TestHandleWithQueryName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			mockRepo := new(MockListRepository)
+			mockRepo := new(MockListUserUseCase)
 			controller := user.NewListUserController(mockRepo)
 
 			if tt.mockResult != nil || tt.mockError != nil {

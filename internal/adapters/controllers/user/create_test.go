@@ -15,11 +15,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockCreateUseCase struct {
+type MockCreateUserUseCase struct {
 	mock.Mock
 }
 
-func (m *MockCreateUseCase) Create(user *dto.CreateUserReqDTO) (*dto.CreateUserResDTO, error) {
+func (m *MockCreateUserUseCase) Create(user *dto.CreateUserReqDTO) (*dto.CreateUserResDTO, error) {
 	args := m.Called(user)
 	if user, ok := args.Get(0).(*dto.CreateUserResDTO); ok {
 		return user, args.Error(1)
@@ -38,21 +38,21 @@ func TestCreateHandle(t *testing.T) {
 		requestBody    interface{}
 		expectedStatus int
 		expectedBody   string
-		repositoryMock func(repo *MockCreateUseCase)
+		repositoryMock func(repo *MockCreateUserUseCase)
 	}{
 		{
 			name:           "Missing request body",
 			requestBody:    nil,
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"Request body is required"}`,
-			repositoryMock: func(repo *MockCreateUseCase) {},
+			repositoryMock: func(repo *MockCreateUserUseCase) {},
 		},
 		{
 			name:           "Invalid JSON body",
 			requestBody:    "{invalid}",
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"invalid character 'i' looking for beginning of object key string"}`,
-			repositoryMock: func(repo *MockCreateUseCase) {},
+			repositoryMock: func(repo *MockCreateUserUseCase) {},
 		},
 		{
 			name: "Valid request body",
@@ -62,7 +62,7 @@ func TestCreateHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"id":1,"name":"John Doe","age":30}`,
-			repositoryMock: func(repo *MockCreateUseCase) {
+			repositoryMock: func(repo *MockCreateUserUseCase) {
 				repo.On("Create", &dto.CreateUserReqDTO{Name: "John Doe", Age: 30}).
 					Return(&dto.CreateUserResDTO{ID: 1, Name: "John Doe", Age: 30}, nil).
 					Once()
@@ -76,7 +76,7 @@ func TestCreateHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody:   `{"message":"Failed to create user"}`,
-			repositoryMock: func(repo *MockCreateUseCase) {
+			repositoryMock: func(repo *MockCreateUserUseCase) {
 				repo.On("Create", &dto.CreateUserReqDTO{Name: "John Doe", Age: 30}).
 					Return(nil, errors.New("database error")).
 					Once()
@@ -88,7 +88,7 @@ func TestCreateHandle(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			repo := new(MockCreateUseCase)
+			repo := new(MockCreateUserUseCase)
 			ctrl := user.NewCreateUserController(repo)
 
 			tt.repositoryMock(repo)

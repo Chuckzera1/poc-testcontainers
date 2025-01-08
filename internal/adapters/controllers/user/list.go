@@ -22,7 +22,7 @@ func (l *listUserController) Handle(c *gin.Context) {
 		return
 	}
 
-	result, err := l.usecase.List(name, intPage)
+	result, err := l.useCase.List(name, intPage)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to list users"})

@@ -14,11 +14,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockRepository struct {
+type MockDeleteUserUseCase struct {
 	mock.Mock
 }
 
-func (m *MockRepository) Delete(userID uint64) error {
+func (m *MockDeleteUserUseCase) Delete(userID uint64) error {
 	args := m.Called(userID)
 	return args.Error(0)
 }
@@ -69,7 +69,7 @@ func TestDeleteUserController_Handle(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			mockRepo := new(MockRepository)
+			mockRepo := new(MockDeleteUserUseCase)
 			if tt.userID != "" && tt.userID != "abc" {
 				userIDInt, _ := strconv.Atoi(tt.userID)
 				mockRepo.On("Delete", uint64(userIDInt)).Return(tt.mockDeleteError)

@@ -24,10 +24,6 @@ type deleteUserUseCase struct {
 	repository application.DeleteUserRepository
 }
 
-func (d *deleteUserUseCase) Delete(id uint64) error {
-	panic("unimplemented")
-}
-
 func NewDeleteUserUseCase(repository application.DeleteUserRepository) application.DeleteUserUseCase {
 	return &deleteUserUseCase{repository}
 }

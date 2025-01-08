@@ -20,7 +20,7 @@ func (m *mockListUserRepository) List(filter *model.User, page int) ([]model.Use
 	return args.Get(0).([]model.User), args.Error(1)
 }
 
-func TestListUserUseCase_List(t *testing.T) {
+func TestListUserUseCase(t *testing.T) {
 	tests := []struct {
 		name           string
 		inputName      string
