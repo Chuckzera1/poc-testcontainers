@@ -5,31 +5,31 @@ import (
 )
 
 type createUserController struct {
-	repository application.CreateUserRepository
+	useCase application.CreateUserUseCase
 }
 
-func NewCreateUserController(repository application.CreateUserRepository) application.BaseController {
+func NewCreateUserController(useCase application.CreateUserUseCase) application.BaseController {
 	return &createUserController{
-		repository,
+		useCase,
 	}
 }
 
 type listUserController struct {
-	repository application.ListUsersRepository
+	useCase application.ListUserUseCase
 }
 
-func NewListUserController(repository application.ListUsersRepository) application.BaseController {
+func NewListUserController(useCase application.ListUserUseCase) application.BaseController {
 	return &listUserController{
-		repository,
+		useCase,
 	}
 }
 
 type deleteUserController struct {
-	repository application.DeleteUserRepository
+	useCase application.DeleteUserUseCase
 }
 
-func NewDeleteUserController(repository application.DeleteUserRepository) application.BaseController {
+func NewDeleteUserController(useCase application.DeleteUserUseCase) application.BaseController {
 	return &deleteUserController{
-		repository,
+		useCase,
 	}
 }

@@ -2,8 +2,6 @@ package user
 
 import (
 	"net/http"
-	"poc-testcontainers/internal/application/dto"
-	"poc-testcontainers/internal/model"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -20,28 +18,19 @@ func (l *listUserController) Handle(c *gin.Context) {
 	intPage, err := strconv.Atoi(page)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "page query params is wrong"})
+		c.Abort()
 		return
 	}
 
-	result, err := l.repository.List(&model.User{
-		Name: name,
-	}, intPage)
+	result, err := l.useCase.List(name, intPage)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to list users"})
+		c.Abort()
 		return
 	}
 
-	var dtos []dto.UserListDTO = []dto.UserListDTO{}
-	for _, user := range result {
-		dtos = append(dtos, dto.UserListDTO{
-			ID:   user.ID,
-			Name: user.Name,
-			Age:  user.Age,
-		})
-	}
-
 	c.JSON(http.StatusOK, gin.H{
-		"data": dtos,
+		"data": result,
 	})
 }

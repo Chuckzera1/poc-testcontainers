@@ -21,7 +21,7 @@ func (d *deleteUserController) Handle(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	err = d.repository.Delete(uint64(userIDInt))
+	err = d.useCase.Delete(uint64(userIDInt))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()

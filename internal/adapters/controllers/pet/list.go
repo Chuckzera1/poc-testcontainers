@@ -38,7 +38,7 @@ func (l *listPetController) Handle(c *gin.Context) {
 			ID:   pet.ID,
 			Name: pet.Name,
 			Age:  pet.Age,
-			UserResponsible: dto.PetUserResponsible{
+			UserResponsible: dto.PetUserResponsibleDTO{
 				ID:   pet.UserResponsible.ID,
 				Name: pet.UserResponsible.Name,
 				Age:  pet.UserResponsible.Age,
