@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"poc-testcontainers/internal/application/dto"
-	"poc-testcontainers/internal/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,13 +21,7 @@ func (ctrl *createPetController) Handle(c *gin.Context) {
 		return
 	}
 
-	um := &model.Pet{
-		Name:              reqBody.Name,
-		Age:               reqBody.Age,
-		UserResponsibleID: reqBody.UserResponsibleID,
-	}
-
-	createdPet, err := ctrl.repository.Create(um)
+	createdPet, err := ctrl.usecase.Create(&reqBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to create pet"})
 		return

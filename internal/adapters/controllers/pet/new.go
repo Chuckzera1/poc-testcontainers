@@ -3,12 +3,12 @@ package pet
 import "poc-testcontainers/internal/application"
 
 type createPetController struct {
-	repository application.CreatePetRepository
+	usecase application.CreatePetUsecase
 }
 
-func NewCreatePetController(repository application.CreatePetRepository) application.BaseController {
+func NewCreatePetController(usecase application.CreatePetUsecase) application.BaseController {
 	return &createPetController{
-		repository,
+		usecase,
 	}
 }
 
