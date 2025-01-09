@@ -18,6 +18,7 @@ func DICreatePetController(db *gorm.DB) application.BaseController {
 
 func DIListPetController(db *gorm.DB) application.BaseController {
 	repo := repositories.DIPetRepository(db)
+	usecase := usecase.DIListPetUseCase(repo)
 
-	return pet.NewListPetController(repo)
+	return pet.NewListPetController(usecase)
 }

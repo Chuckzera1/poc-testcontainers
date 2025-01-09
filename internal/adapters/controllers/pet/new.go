@@ -13,11 +13,11 @@ func NewCreatePetController(usecase application.CreatePetUsecase) application.Ba
 }
 
 type listPetController struct {
-	repository application.ListPetsRepository
+	usecase application.ListPetUsecase
 }
 
-func NewListPetController(repository application.ListPetsRepository) application.BaseController {
+func NewListPetController(usecase application.ListPetUsecase) application.BaseController {
 	return &listPetController{
-		repository,
+		usecase,
 	}
 }

@@ -11,3 +11,11 @@ type createPetUsecase struct {
 func NewCreatePetUseCase(repo application.CreatePetRepository) application.CreatePetUsecase {
 	return &createPetUsecase{repo}
 }
+
+type listPetUsecase struct {
+	repo application.ListPetsRepository
+}
+
+func NewListPetUseCase(repo application.ListPetsRepository) application.ListPetUsecase {
+	return &listPetUsecase{repo}
+}
