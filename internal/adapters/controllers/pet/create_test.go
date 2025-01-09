@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"poc-testcontainers/internal/adapters/controllers/pet"
 	"poc-testcontainers/internal/application/dto"
-	"poc-testcontainers/internal/model"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -16,13 +15,13 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockCreateRepository struct {
+type MockCreateUseCase struct {
 	mock.Mock
 }
 
-func (m *MockCreateRepository) Create(pet *model.Pet) (*model.Pet, error) {
+func (m *MockCreateUseCase) Create(pet *dto.CreatePetReqDTO) (*dto.CreatePetResDTO, error) {
 	args := m.Called(pet)
-	if pet, ok := args.Get(0).(*model.Pet); ok {
+	if pet, ok := args.Get(0).(*dto.CreatePetResDTO); ok {
 		return pet, args.Error(1)
 	}
 
@@ -39,21 +38,21 @@ func TestCreateHandle(t *testing.T) {
 		requestBody    interface{}
 		expectedStatus int
 		expectedBody   string
-		repositoryMock func(repo *MockCreateRepository)
+		useCaseMock    func(usecase *MockCreateUseCase)
 	}{
 		{
 			name:           "Missing request body",
 			requestBody:    nil,
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"Request body is required"}`,
-			repositoryMock: func(repo *MockCreateRepository) {},
+			useCaseMock:    func(usecase *MockCreateUseCase) {},
 		},
 		{
 			name:           "Invalid JSON body",
 			requestBody:    "{invalid}",
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"invalid character 'i' looking for beginning of object key string"}`,
-			repositoryMock: func(repo *MockCreateRepository) {},
+			useCaseMock:    func(usecase *MockCreateUseCase) {},
 		},
 		{
 			name: "Missing UserResponsibleID body",
@@ -63,7 +62,7 @@ func TestCreateHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"Key: 'CreatePetReqDTO.UserResponsibleID' Error:Field validation for 'UserResponsibleID' failed on the 'required' tag"}`,
-			repositoryMock: func(repo *MockCreateRepository) {},
+			useCaseMock:    func(usecase *MockCreateUseCase) {},
 		},
 		{
 			name: "Valid request body",
@@ -74,9 +73,9 @@ func TestCreateHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"id":1,"name":"John Doe","age":30, "userResponsibleId": 1}`,
-			repositoryMock: func(repo *MockCreateRepository) {
-				repo.On("Create", &model.Pet{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
-					Return(&model.Pet{ID: 1, Name: "John Doe", Age: 30, UserResponsibleID: 1}, nil).
+			useCaseMock: func(usecase *MockCreateUseCase) {
+				usecase.On("Create", &dto.CreatePetReqDTO{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
+					Return(&dto.CreatePetResDTO{ID: 1, Name: "John Doe", Age: 30, UserResponsibleID: 1}, nil).
 					Once()
 			},
 		},
@@ -89,8 +88,8 @@ func TestCreateHandle(t *testing.T) {
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody:   `{"message":"Failed to create pet"}`,
-			repositoryMock: func(repo *MockCreateRepository) {
-				repo.On("Create", &model.Pet{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
+			useCaseMock: func(usecase *MockCreateUseCase) {
+				usecase.On("Create", &dto.CreatePetReqDTO{Name: "John Doe", Age: 30, UserResponsibleID: 1}).
 					Return(nil, errors.New("database error")).
 					Once()
 			},
@@ -101,10 +100,10 @@ func TestCreateHandle(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			repo := new(MockCreateRepository)
-			ctrl := pet.NewCreatePetController(repo)
+			usecase := new(MockCreateUseCase)
+			ctrl := pet.NewCreatePetController(usecase)
 
-			tt.repositoryMock(repo)
+			tt.useCaseMock(usecase)
 
 			r := gin.Default()
 			r.POST("/pet", ctrl.Handle)
@@ -127,7 +126,7 @@ func TestCreateHandle(t *testing.T) {
 			assert.Equal(t, tt.expectedStatus, resp.Code)
 			assert.JSONEq(t, tt.expectedBody, resp.Body.String())
 
-			repo.AssertExpectations(t)
+			usecase.AssertExpectations(t)
 		})
 	}
 }

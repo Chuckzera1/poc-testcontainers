@@ -11,7 +11,7 @@ import (
 
 func (u *petRepository) Create(pet *model.Pet) (*model.Pet, error) {
 	var user model.User
-	err := u.db.Where("id = ? AND deleted_at IS NULL", pet.UserResponsibleID).First(&user).Error
+	err := u.db.Where("id", pet.UserResponsibleID).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("user responsible does not exist or has been deleted")
