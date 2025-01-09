@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"poc-testcontainers/internal/adapters/controllers/pet"
-	"poc-testcontainers/internal/model"
+	"poc-testcontainers/internal/application/dto"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -12,13 +12,13 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockListRepository struct {
+type MockListUsecase struct {
 	mock.Mock
 }
 
-func (m *MockListRepository) List(pet *model.Pet, page int) ([]model.Pet, error) {
-	args := m.Called(pet, page)
-	return args.Get(0).([]model.Pet), args.Error(1)
+func (m *MockListUsecase) List(name string, page int) ([]*dto.PetListDTO, error) {
+	args := m.Called(name, page)
+	return args.Get(0).([]*dto.PetListDTO), args.Error(1)
 }
 
 func TestHandleWithQueryName(t *testing.T) {
@@ -30,7 +30,7 @@ func TestHandleWithQueryName(t *testing.T) {
 		name           string
 		queryName      string
 		queryPage      string
-		mockResult     []model.Pet
+		mockResult     []*dto.PetListDTO
 		mockError      error
 		expectedStatus int
 		expectedBody   string
@@ -39,11 +39,17 @@ func TestHandleWithQueryName(t *testing.T) {
 			name:      "valid request",
 			queryName: "John",
 			queryPage: "1",
-			mockResult: []model.Pet{{ID: 1, Name: "John", Age: 30, UserResponsibleID: 1, UserResponsible: &model.User{
-				ID:   1,
-				Name: "James",
-				Age:  30,
-			}}},
+			mockResult: []*dto.PetListDTO{
+				{
+					ID:   1,
+					Name: "John",
+					Age:  30,
+					UserResponsible: &dto.PetUserResponsibleDTO{
+						ID:   1,
+						Name: "James",
+						Age:  30,
+					},
+				}},
 			mockError:      nil,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"data":[{ "id":1, "name":"John", "age":30, "userResponsible": {"id": 1, "name": "James", "age": 30}}]}`,
@@ -70,11 +76,11 @@ func TestHandleWithQueryName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			mockRepo := new(MockListRepository)
-			controller := pet.NewListPetController(mockRepo)
+			mockList := new(MockListUsecase)
+			controller := pet.NewListPetController(mockList)
 
 			if tt.mockResult != nil || tt.mockError != nil {
-				mockRepo.On("List", &model.Pet{Name: tt.queryName}, mock.AnythingOfType("int")).
+				mockList.On("List", tt.queryName, mock.AnythingOfType("int")).
 					Return(tt.mockResult, tt.mockError)
 			}
 

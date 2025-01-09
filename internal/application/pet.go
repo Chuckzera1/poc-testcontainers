@@ -26,3 +26,7 @@ type PetRepository interface {
 type CreatePetUsecase interface {
 	Create(pet *dto.CreatePetReqDTO) (*dto.CreatePetResDTO, error)
 }
+
+type ListPetUsecase interface {
+	List(name string, page int) ([]*dto.PetListDTO, error)
+}
