@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/docker/go-connections/nat"
+	_ "github.com/lib/pq"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
+
 	"gorm.io/gorm"
 )
 
@@ -65,7 +68,9 @@ func startPostgresContainer(ctx context.Context) (testcontainers.Container, erro
 			"POSTGRES_PASSWORD": "testpass",
 			"POSTGRES_DB":       "testdb",
 		},
-		WaitingFor: wait.ForListeningPort("5432/tcp").WithStartupTimeout(60 * time.Second),
+		WaitingFor: wait.ForSQL("5432/tcp", "postgres", func(host string, port nat.Port) string {
+			return fmt.Sprintf("host=%s port=%s user=testuser password=testpass dbname=testdb sslmode=disable", host, port.Port())
+		}).WithStartupTimeout(90 * time.Second),
 	}
 
 	return testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
