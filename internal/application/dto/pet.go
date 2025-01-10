@@ -20,8 +20,8 @@ type PetUserResponsibleDTO struct {
 }
 
 type PetListDTO struct {
-	ID              uint64                `json:"id"`
-	Name            string                `json:"name"`
-	Age             int                   `json:"age"`
-	UserResponsible PetUserResponsibleDTO `json:"userResponsible"`
+	ID              uint64                 `json:"id"`
+	Name            string                 `json:"name"`
+	Age             int                    `json:"age"`
+	UserResponsible *PetUserResponsibleDTO `json:"userResponsible"`
 }

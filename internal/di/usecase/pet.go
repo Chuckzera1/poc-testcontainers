@@ -8,3 +8,7 @@ import (
 func DICreatePetUseCase(repository application.CreatePetRepository) application.CreatePetUsecase {
 	return pet.NewCreatePetUseCase(repository)
 }
+
+func DIListPetUseCase(repository application.ListPetsRepository) application.ListPetUsecase {
+	return pet.NewListPetUseCase(repository)
+}
